@@ -10,7 +10,7 @@ backend
 ## Запуск проекта
 Сайт доступен по ссылке: https://web-exp.nomoredomains.club
 
-IP  158.160.47.246
+IP  158.160.59.188
 Backend  https://api.nomoredomains.club
 
 ## Используемые технологии:
