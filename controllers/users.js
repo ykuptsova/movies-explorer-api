@@ -2,7 +2,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-// const NotFoundError = require('../errors/not-found-error');
 const ConflictError = require('../errors/conflict-error');
 const BadRequestError = require('../errors/bad-request-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
@@ -11,7 +10,7 @@ const {
   CREATED,
 } = require('../utils/status-codes');
 
-// GET users/me
+// GET /users/me возвращает информацию о пользователе
 module.exports.getUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
@@ -23,7 +22,7 @@ module.exports.getUser = (req, res, next) => {
     .catch(next);
 };
 
-// POST signup
+// POST /signup — создаёт пользователя с переданными в теле данными
 module.exports.createUser = (req, res, next) => {
   const {
     name, email, password,
@@ -78,12 +77,13 @@ module.exports.login = (req, res, next) => {
     .catch(next);
 };
 
+// PATCH /users/me — обновляет информацию о пользователе
 module.exports.updateProfile = (req, res, next) => {
-  const { name, about } = req.body;
+  const { name, email } = req.body;
   User
     .findByIdAndUpdate(
       req.user._id,
-      { name, about },
+      { name, email },
       { new: true, runValidators: true },
     )
     .then((user) => {
@@ -95,6 +95,8 @@ module.exports.updateProfile = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError());
+      } else if (err.code === 11000) {
+        next(new ConflictError());
       } else {
         next(err);
       }

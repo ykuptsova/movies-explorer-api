@@ -2,31 +2,38 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const { errors } = require('celebrate');
 const handleError = require('./middlewares/handle-error');
 const { login, createUser } = require('./controllers/users');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { validateLogin, validateCreateUser } = require('./utils/validations');
+const { rateLimiter } = require('./utils/rate-limiter');
 
 // разбираем настройки окружения
-const { PORT = 3010, NODE_ENV } = process.env;
+const { PORT = 3010, NODE_ENV, MONGODB_URL } = process.env;
 if (NODE_ENV !== 'production') {
   process.env.JWT_SECRET = 'dev-secret';
+  process.env.MONGODB_URL = 'mongodb://localhost:27017/bitfilmsdb';
 }
 
 // конфигурируем базу данных
 mongoose.set('strictQuery', true);
 
 // подключаемся к серверу mongo
-mongoose.connect('mongodb://localhost:27017/moviesdb', {
-  useNewUrlParser: true,
-});
+mongoose.connect(MONGODB_URL, { useNewUrlParser: true });
 
 // создаем сервер
 const app = express();
 
+// ограничиваем число запросов в минуту
+app.use(rateLimiter);
+
 // обрабатываем CORS заголовки
 app.use(cors());
+
+// настраиваем заголовки
+app.use(helmet());
 
 // разбираем body в json
 app.use(express.json());
@@ -52,9 +59,7 @@ app.post(
   validateCreateUser,
   createUser,
 );
-app.use('/users', require('./routes/users'));
-app.use('/movies', require('./routes/movies'));
-app.use('/', require('./routes/not-found'));
+app.use(['/users', '/movies', '/'], require('./routes/index'));
 
 // подключаем логгер ошибок
 app.use(errorLogger);
@@ -65,6 +70,5 @@ app.use(handleError);
 
 // поднимаем сервер по порту
 app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log(`App listening on port ${PORT}`);
 });

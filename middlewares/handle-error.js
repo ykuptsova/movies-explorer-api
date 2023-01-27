@@ -6,8 +6,7 @@ module.exports = (err, req, res, next) => {
     ? 'Произошла ошибка'
     : err.message;
   if (process.env.NODE_ENV === 'development') {
-    // eslint-disable-next-line no-console
-    console.log(err);
+    console.log('Error:', err.message);
   }
   res.status(statusCode).send({ message });
   next();
