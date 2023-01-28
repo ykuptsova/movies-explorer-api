@@ -1,9 +1,9 @@
 const { DENIED } = require('../utils/status-codes');
+const { MSG_ACCESS_DENIED } = require('../utils/constants');
 
 class AccessDeniedError extends Error {
   constructor(message) {
-    // constants.ACCESS_DENIED
-    super(message || 'Отказано в доступе');
+    super(message || MSG_ACCESS_DENIED);
     this.statusCode = DENIED;
   }
 }

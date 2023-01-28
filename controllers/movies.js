@@ -16,35 +16,9 @@ module.exports.getMovies = (req, res, next) => {
 
 // POST movies
 module.exports.createMovie = (req, res, next) => {
-  const {
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    thumbnail,
-    movieId,
-    nameRU,
-    nameEN,
-  } = req.body;
-  // const owner = req.user._id;
+  const owner = req.user._id;
   Movie
-    .create({
-      country,
-      director,
-      duration,
-      year,
-      description,
-      image,
-      trailerLink,
-      thumbnail,
-      movieId,
-      nameRU,
-      nameEN,
-      owner: req.user._id,
-    })
+    .create({ ...req.body, owner })
     .then((movie) => res.status(CREATED).send({ data: movie }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -59,13 +33,13 @@ module.exports.createMovie = (req, res, next) => {
 module.exports.deleteMovie = (req, res, next) => {
   Movie
     .findById(req.params.movieId)
-    .orFail(() => next(new NotFoundError()))
+    .orFail(new NotFoundError())
     .then((movie) => {
       if (!movie.owner.equals(req.user._id)) {
         next(new AccessDeniedError());
       } else {
         movie.remove()
-          .then(() => res.send({ message: movie }))
+          .then(() => res.send({ data: movie }))
           .catch(next);
       }
     })

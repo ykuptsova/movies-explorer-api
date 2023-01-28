@@ -1,8 +1,9 @@
 const { UNAUTHORIZED } = require('../utils/status-codes');
+const { MSG_NEED_AUTHORIZATION } = require('../utils/constants');
 
 class UnauthorizedError extends Error {
   constructor(message) {
-    super(message || 'Необходима авторизация');
+    super(message || MSG_NEED_AUTHORIZATION);
     this.statusCode = UNAUTHORIZED;
   }
 }

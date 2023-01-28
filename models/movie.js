@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const isURL = require('validator/lib/isURL');
+const { MSG_INCORRECT_LINK } = require('../utils/constants');
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -32,7 +33,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (value) => isURL(value),
-      message: 'Некорректная ссылка',
+      message: MSG_INCORRECT_LINK,
     },
   },
 
@@ -41,7 +42,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (value) => isURL(value),
-      message: 'Некорректная ссылка',
+      message: MSG_INCORRECT_LINK,
     },
   },
 
@@ -50,7 +51,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (value) => isURL(value),
-      message: 'Некорректная ссылка',
+      message: MSG_INCORRECT_LINK,
     },
   },
 

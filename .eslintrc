@@ -5,6 +5,7 @@
       "error",
       { "allow": ["_id"] }
     ],
-    "no-console": 0
+    "no-console": 0,
+    "import/no-extraneous-dependencies": 0
   }
 }

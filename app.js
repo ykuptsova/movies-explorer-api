@@ -5,23 +5,18 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
 const handleError = require('./middlewares/handle-error');
-const { login, createUser } = require('./controllers/users');
+const { login, createUser, logout } = require('./controllers/users');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { mongoDbUrl, port } = require('./utils/constants');
 const { validateLogin, validateCreateUser } = require('./utils/validations');
 const { rateLimiter } = require('./utils/rate-limiter');
-
-// разбираем настройки окружения
-const { PORT = 3010, NODE_ENV, MONGODB_URL } = process.env;
-if (NODE_ENV !== 'production') {
-  process.env.JWT_SECRET = 'dev-secret';
-  process.env.MONGODB_URL = 'mongodb://localhost:27017/bitfilmsdb';
-}
+const { MSG_SERVER_GOES_DOWN } = require('./utils/constants');
 
 // конфигурируем базу данных
 mongoose.set('strictQuery', true);
 
 // подключаемся к серверу mongo
-mongoose.connect(MONGODB_URL, { useNewUrlParser: true });
+mongoose.connect(mongoDbUrl, { useNewUrlParser: true });
 
 // создаем сервер
 const app = express();
@@ -44,21 +39,14 @@ app.use(requestLogger);
 // краш-тест сервера
 app.get('/crash-test', () => {
   setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
+    throw new Error(MSG_SERVER_GOES_DOWN);
   }, 0);
 });
 
 // добавляем руты
-app.post(
-  '/signin',
-  validateLogin,
-  login,
-);
-app.post(
-  '/signup',
-  validateCreateUser,
-  createUser,
-);
+app.post('/signin', validateLogin, login);
+app.post('/signup', validateCreateUser, createUser);
+app.post('/signout', logout);
 app.use(['/users', '/movies', '/'], require('./routes/index'));
 
 // подключаем логгер ошибок
@@ -69,6 +57,6 @@ app.use(errors());
 app.use(handleError);
 
 // поднимаем сервер по порту
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`App listening on port ${port}`);
 });
