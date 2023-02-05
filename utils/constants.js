@@ -18,12 +18,11 @@ module.exports.mongoDbUrl = mongoDbUrl;
 
 module.exports.port = PORT || 3010;
 
-module.exports.MSG_SIGNOUT_SUCCESS = 'Произведён выход из системы';
 module.exports.MSG_INCORRECT_CREDENTIALS = 'Переданы неверный email или пароль';
 module.exports.MSG_NEED_AUTHORIZATION = 'Необходима авторизация';
 module.exports.MSG_SERVER_GOES_DOWN = 'Сервер сейчас упадёт';
 module.exports.MSG_ACCESS_DENIED = 'Отказано в доступе';
-module.exports.MSG__NOT_FOUND = 'Ресурс не найден';
+module.exports.MSG_NOT_FOUND = 'Ресурс не найден';
 module.exports.MSG_INCORRECT_EMAIL = 'Некорректный email адрес';
 module.exports.MSG_INCORRECT_LINK = 'Некорректная ссылка';
 module.exports.MSG_DUPLICATED_EMAIL = 'Пользователь с таким email уже существует';

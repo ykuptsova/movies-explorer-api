@@ -7,7 +7,7 @@ const BadRequestError = require('../errors/bad-request-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
 const NotFoundError = require('../errors/not-found-error');
 const { CREATED } = require('../utils/status-codes');
-const { jwtSecret, MSG_SIGNOUT_SUCCESS, MSG_INCORRECT_CREDENTIALS } = require('../utils/constants');
+const { jwtSecret, MSG_INCORRECT_CREDENTIALS } = require('../utils/constants');
 
 // GET /users/me возвращает информацию о пользователе
 module.exports.getUser = (req, res, next) => {
@@ -73,18 +73,6 @@ module.exports.login = (req, res, next) => {
       res.send({ token });
     })
     .catch(next);
-};
-
-// signout удаляет JWT из куки
-module.exports.logout = (req, res) => {
-  res
-    .status(200)
-    .clearCookie('token', {
-      httpOnly: true,
-      sameSite: 'none',
-      secure: true,
-    })
-    .send({ message: MSG_SIGNOUT_SUCCESS });
 };
 
 // PATCH /users/me — обновляет информацию о пользователе
